@@ -1,0 +1,218 @@
+{ "name": "GOAL",
+  "scopeName": "source.goal",
+  "fileTypes": ["goal", "mod2g"],
+  "patterns": [
+    { "include": "#comments" },
+  	{ "name": "meta.preprocessor.c.include",
+  	  "begin": "^\\s*#\\s*(import)\\b\\s+",
+  	  "end": ".$",
+  	  "captures": {
+  	  	"1": { "name": "keyword.control.import.include.goal" }
+  	  },
+
+  	  "patterns": [
+  	  	{ "name": "string.quoted.double.include.goal",
+  	  	  "begin": "\"",
+  	  	  "end": "\"",
+  	  	  "beginCaptures": {
+  	  	  	"0": { "name": "punctuation.definition.string.begin.goal" }
+  	  	  },
+  	  	  "endCaptures": {
+  	  	  	"0": { "name": "punctuation.definition.string.end.goal" }
+  	  	  }
+  	  	}
+  	  ]
+  	},
+    { "name": "meta.goal.module",
+      "begin": "^\\s*((main|init|event)\\s+)?(module)(\\s+[a-z_]+)?\\s*(\\[((\\s*[a-z]+\\s*=\\s*[a-z]+\\s*(,(?!\\])|(?=\\s*\\])))+)\\]\\s*)?{",
+      "end": "}",
+      "beginCaptures": {
+        "1": { "name": "entity.name.type.goal.module" },
+        "3": { "name": "keyword.control.goal.module" },
+        "4": { "name": "entity.name.type.goal.module" },
+        "6": { "name": "variable.parameter.goal.proplist" }
+      },
+      "patterns": [
+        { "name": "meta.goal.section.knowledge",
+          "begin": "^\\s*(knowledge)\\s*{",
+          "end": "}",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.goal.knowledge" }
+          },
+          "patterns": [
+            { "include": "source.prolog" }
+          ]
+        },
+        { "name": "meta.goal.section.beliefs",
+          "begin": "^\\s*(beliefs)\\s*{",
+          "end": "^\\s*}\\s$",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.goal.beliefs" }
+          },
+          "patterns": [
+            { "include": "source.prolog" }
+          ]
+        },
+        { "name": "meta.goal.section.goals",
+          "begin": "^\\s*(goals)\\s*{",
+          "end": "^\\s*}\\s$",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.goal.goals" }
+          },
+          "patterns": [
+            { "include": "source.prolog" }
+          ]
+        },
+        { "name": "meta.goal.section.actionspecs",
+          "begin": "^\\s*(actionspec)\\s*{",
+          "end": "^\\s*}\\s$",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.goal.actionspec" }
+          },
+          "patterns": [
+            { "include": "#comments" },
+            { "name": "meta.goal.actionspec",
+              "begin": "(\\w+)\\s*(\\((\\s*\\w+\\s*(,\\s*\\w+\\s*)*)\\))?\\s*{",
+              "end": "}",
+              "beginCaptures": {
+                "1": { "name": "entity.name.function.actionspec.goal" },
+                "3": { "name": "variable.parameter.actionspec.goal" }
+              },
+              "patterns": [
+                { "include": "#comments" },
+                { "name": "meta.goal.actionspec.condition",
+                  "begin": "(pre|post)\\s*{",
+                  "end": "}",
+                  "beginCaptures": {
+                    "1": { "name": "keyword.control.goal.condition" }
+                  },
+                  "patterns": [
+                    { "include": "#comments" },
+                    { "include": "#insertion" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        { "name": "meta.goal.section.program",
+          "begin": "^\\s*(program)\\s*\\s*(\\[((\\s*[a-z]+\\s*=\\s*[a-z]+\\s*(,(?!\\])|(?=\\s*\\])))+)\\]\\s*)?{",
+          "end": "^\\s*}\\s$",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.goal.program" },
+            "4": { "name": "variable.parameter.goal.proplist" }
+          },
+          "patterns": [
+            { "include": "#comments" },
+            { "include": "#ifs" },
+            { "name": "meta.goal.control.block",
+              "begin": "{",
+              "end": "}",
+              "patterns": [
+                { "include": "#ifs" },
+                { "include": "$self" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "name" : "comment.line.percent-sign.goal",
+          "match": "%.*"
+        }
+      ]
+    },
+    "ifs": {
+      "patterns": [
+        { "name": "meta.goal.control.if",
+          "begin": "if",
+          "end": "then",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.goal.if.if" }
+          },
+          "endCaptures": {
+            "0": { "name": "keyword.control.goal.if.then" }
+          },
+          "patterns": [
+            { "include": "#query" }
+          ]
+        },
+        { "name": "meta.goal.control.forall",
+          "begin": "forall",
+          "end": "do",
+          "beginCaptures": {
+            "0": { "name": "keyword.control.goal.forall.forall" }
+          },
+          "endCaptures": {
+            "0": { "name": "keyword.control.goal.forall.do" }
+          },
+          "patterns": [
+            { "include": "#query" }
+          ]
+        },
+        { "name": "meta.goal.insertion",
+          "begin": "(insert|delete|send|sendonce)\\s*\\(",
+          "end": "\\)",
+          "beginCaptures": {
+            "1": { "name": "keyword.operator.insert.goal" }
+          },
+          "patterns": [
+            { "include": "#insertion" }
+          ]
+        }
+      ]
+    },
+    "insertion": {
+      "patterns": [
+        { "name": "constant.language.boolean.goal",
+          "match": "true|false"
+        },
+        { "name": "meta.goal.insertion.not",
+          "begin": "(not)\\s*\\(",
+          "end": "\\)",
+          "beginCaptures": {
+            "1": { "name": "keyword.operator.not.goal" }
+          },
+          "patterns": [
+            { "include": "#insertion" }
+          ]
+        },
+        { "name": "meta.goal.predicate",
+          "begin": "(\\w+)\\s*\\(",
+          "end": "\\)",
+          "patterns": [
+            { "include": "#insertion" }
+          ]
+        },
+        { "name": "string.unquoted.goal.predicate",
+          "match": "(?<![A-Za-z])[a-z]\\w*"
+        },
+        { "name": "constant.numeric.goal",
+          "match": "\\d+"
+        },
+        { "name": "variable.other.goal",
+          "match": "[A-Z]\\w+"
+        }
+      ]
+    },
+    "query": {
+      "patterns": [
+        { "name": "meta.goal.control.belief",
+          "begin": "(bel)\\s*\\(",
+          "end": "\\)",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.goal.belief" }
+          },
+          "patterns": [
+            { "include": "#insertion" }
+          ]
+        }
+      ]
+    }
+  },
+  "uuid": "4ed31fe4-dbe9-4bdc-9b86-293f6b2f1d75"
+}
