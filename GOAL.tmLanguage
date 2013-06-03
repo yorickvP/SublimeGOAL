@@ -16,51 +16,12 @@
 			<string>#comments</string>
 		</dict>
 		<dict>
-			<key>begin</key>
-			<string>^\s*#\s*(import)\b\s+</string>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>keyword.control.import.include.goal</string>
-				</dict>
-			</dict>
-			<key>end</key>
-			<string>.$</string>
-			<key>name</key>
-			<string>meta.preprocessor.c.include</string>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>begin</key>
-					<string>"</string>
-					<key>beginCaptures</key>
-					<dict>
-						<key>0</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.definition.string.begin.goal</string>
-						</dict>
-					</dict>
-					<key>end</key>
-					<string>"</string>
-					<key>endCaptures</key>
-					<dict>
-						<key>0</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.definition.string.end.goal</string>
-						</dict>
-					</dict>
-					<key>name</key>
-					<string>string.quoted.double.include.goal</string>
-				</dict>
-			</array>
+			<key>include</key>
+			<string>#imports</string>
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>^\s*((main|init|event)\s+)?(module)(\s+[a-z_]+)?\s*(\[((\s*[a-z]+\s*=\s*[a-z]+\s*(,(?!\])|(?=\s*\])))+)\]\s*)?{</string>
+			<string>^\s*((main|init|event)\s+)?(module)(\s+[A-Za-z_]+)?\s*(\[((\s*[a-z]+\s*=\s*[a-z]+\s*(,(?!\])|(?=\s*\])))+)\]\s*)?{</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -91,6 +52,10 @@
 			<key>patterns</key>
 			<array>
 				<dict>
+					<key>include</key>
+					<string>#comments</string>
+				</dict>
+				<dict>
 					<key>begin</key>
 					<string>^\s*(knowledge)\s*{</string>
 					<key>beginCaptures</key>
@@ -110,6 +75,10 @@
 						<dict>
 							<key>include</key>
 							<string>source.prolog</string>
+						</dict>
+						<dict>
+							<key>include</key>
+							<string>#imports</string>
 						</dict>
 					</array>
 				</dict>
@@ -373,7 +342,7 @@
 				</dict>
 				<dict>
 					<key>begin</key>
-					<string>(insert|delete|send|sendonce)\s*\(</string>
+					<string>(insert|delete|send|sendonce|drop|adopt)\s*\(</string>
 					<key>beginCaptures</key>
 					<dict>
 						<key>1</key>
@@ -391,6 +360,55 @@
 						<dict>
 							<key>include</key>
 							<string>#insertion</string>
+						</dict>
+					</array>
+				</dict>
+			</array>
+		</dict>
+		<key>imports</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>^\s*#\s*(import)\b\s+</string>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.control.import.include.goal</string>
+						</dict>
+					</dict>
+					<key>end</key>
+					<string>.$</string>
+					<key>name</key>
+					<string>meta.preprocessor.c.include</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>begin</key>
+							<string>"</string>
+							<key>beginCaptures</key>
+							<dict>
+								<key>0</key>
+								<dict>
+									<key>name</key>
+									<string>punctuation.definition.string.begin.goal</string>
+								</dict>
+							</dict>
+							<key>end</key>
+							<string>"</string>
+							<key>endCaptures</key>
+							<dict>
+								<key>0</key>
+								<dict>
+									<key>name</key>
+									<string>punctuation.definition.string.end.goal</string>
+								</dict>
+							</dict>
+							<key>name</key>
+							<string>string.quoted.double.include.goal</string>
 						</dict>
 					</array>
 				</dict>
@@ -470,24 +488,47 @@
 			<array>
 				<dict>
 					<key>begin</key>
-					<string>(bel)\s*\(</string>
+					<string>(bel|goal|a\-goal|goal\-a)\s*\(</string>
 					<key>beginCaptures</key>
 					<dict>
 						<key>1</key>
 						<dict>
 							<key>name</key>
-							<string>keyword.control.goal.belief</string>
+							<string>keyword.control.goal.query</string>
 						</dict>
 					</dict>
 					<key>end</key>
 					<string>\)</string>
 					<key>name</key>
-					<string>meta.goal.control.belief</string>
+					<string>meta.goal.control.query</string>
 					<key>patterns</key>
 					<array>
 						<dict>
 							<key>include</key>
 							<string>#insertion</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>(not)\s*\(</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.control.goal.query</string>
+						</dict>
+					</dict>
+					<key>end</key>
+					<string>\)</string>
+					<key>name</key>
+					<string>meta.goal.control.query.not</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>include</key>
+							<string>#query</string>
 						</dict>
 					</array>
 				</dict>

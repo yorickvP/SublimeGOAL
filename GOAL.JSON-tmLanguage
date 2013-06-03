@@ -3,28 +3,9 @@
   "fileTypes": ["goal", "mod2g"],
   "patterns": [
     { "include": "#comments" },
-  	{ "name": "meta.preprocessor.c.include",
-  	  "begin": "^\\s*#\\s*(import)\\b\\s+",
-  	  "end": ".$",
-  	  "captures": {
-  	  	"1": { "name": "keyword.control.import.include.goal" }
-  	  },
-
-  	  "patterns": [
-  	  	{ "name": "string.quoted.double.include.goal",
-  	  	  "begin": "\"",
-  	  	  "end": "\"",
-  	  	  "beginCaptures": {
-  	  	  	"0": { "name": "punctuation.definition.string.begin.goal" }
-  	  	  },
-  	  	  "endCaptures": {
-  	  	  	"0": { "name": "punctuation.definition.string.end.goal" }
-  	  	  }
-  	  	}
-  	  ]
-  	},
+    { "include": "#imports" },
     { "name": "meta.goal.module",
-      "begin": "^\\s*((main|init|event)\\s+)?(module)(\\s+[a-z_]+)?\\s*(\\[((\\s*[a-z]+\\s*=\\s*[a-z]+\\s*(,(?!\\])|(?=\\s*\\])))+)\\]\\s*)?{",
+      "begin": "^\\s*((main|init|event)\\s+)?(module)(\\s+[A-Za-z_]+)?\\s*(\\[((\\s*[a-z]+\\s*=\\s*[a-z]+\\s*(,(?!\\])|(?=\\s*\\])))+)\\]\\s*)?{",
       "end": "}",
       "beginCaptures": {
         "1": { "name": "entity.name.type.goal.module" },
@@ -33,6 +14,7 @@
         "6": { "name": "variable.parameter.goal.proplist" }
       },
       "patterns": [
+        { "include": "#comments" },
         { "name": "meta.goal.section.knowledge",
           "begin": "^\\s*(knowledge)\\s*{",
           "end": "}",
@@ -40,7 +22,8 @@
             "1": { "name": "keyword.control.goal.knowledge" }
           },
           "patterns": [
-            { "include": "source.prolog" }
+            { "include": "source.prolog" },
+            { "include": "#imports" }
           ]
         },
         { "name": "meta.goal.section.beliefs",
@@ -119,6 +102,30 @@
     }
   ],
   "repository": {
+    "imports": {
+      "patterns": [
+        { "name": "meta.preprocessor.c.include",
+          "begin": "^\\s*#\\s*(import)\\b\\s+",
+          "end": ".$",
+          "captures": {
+            "1": { "name": "keyword.control.import.include.goal" }
+          },
+
+          "patterns": [
+            { "name": "string.quoted.double.include.goal",
+              "begin": "\"",
+              "end": "\"",
+              "beginCaptures": {
+                "0": { "name": "punctuation.definition.string.begin.goal" }
+              },
+              "endCaptures": {
+                "0": { "name": "punctuation.definition.string.end.goal" }
+              }
+            }
+          ]
+        }
+      ]
+    },
     "comments": {
       "patterns": [
         { "name" : "comment.line.percent-sign.goal",
@@ -155,7 +162,7 @@
           ]
         },
         { "name": "meta.goal.insertion",
-          "begin": "(insert|delete|send|sendonce)\\s*\\(",
+          "begin": "(insert|delete|send|sendonce|drop|adopt)\\s*\\(",
           "end": "\\)",
           "beginCaptures": {
             "1": { "name": "keyword.operator.insert.goal" }
@@ -201,14 +208,24 @@
     },
     "query": {
       "patterns": [
-        { "name": "meta.goal.control.belief",
-          "begin": "(bel)\\s*\\(",
+        { "name": "meta.goal.control.query",
+          "begin": "(bel|goal|a\\-goal|goal\\-a)\\s*\\(",
           "end": "\\)",
           "beginCaptures": {
-            "1": { "name": "keyword.control.goal.belief" }
+            "1": { "name": "keyword.control.goal.query" }
           },
           "patterns": [
             { "include": "#insertion" }
+          ]
+        },
+        { "name": "meta.goal.control.query.not",
+          "begin": "(not)\\s*\\(",
+          "end": "\\)",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.goal.query" }
+          },
+          "patterns": [
+            { "include": "#query" }
           ]
         }
       ]
